@@ -1,1 +1,49 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Fork & Foundry — Forged in Service</title><meta name="description" content="Free tools, resources, and real talk for kitchen operators and professional cooks. Fork & Foundry — Forged in Service."/><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet"/><style>:root {--forge: #141210;--iron: #1e1914;--slag: #2a2318;--border: #352d22;--ember: #c4622a;--flame: #e07840;--gold: #c8963c;--ash: #a89070;--smoke: #655848;--linen: #ede4d4;--cream: #f8f0e0;--green: #4a9a6a;--yellow: #c8a030;--red: #b84040;--r: 2px;}*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}body{background:var(--forge);color:var(--linen);font-family:'Fira Code',monospace;min-height:100vh;overflow-x:hidden;padding-bottom:70px;}body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px;}.page{display:none;min-height:calc(100vh - 70px);animation:fadeUp 0.3s ease;}.page.active{display:block;}@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}.gnav{position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--iron);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0);}.gnav-btn{flex:1;padding:10px 2px 8px;background:none;border:none;color:var(--smoke);font-family:'Fira Code',monospace;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:color 0.2s;display:flex;flex-direction:column;align-items:center;gap:3px;}.gnav-icon{font-size:16px;line-height:1;}.gnav-btn:hover{color:var(--ash);}.gnav-btn.active{color:var(--flame);}.page-hdr{background:linear-gradient(180deg,#1e1610 0%,var(--forge) 100%);border-bottom:1px solid var(--border);padding:36px 20px 26px;text-align:center;position:relative;overflow:hidden;}.page-hdr::after{content:'';position:absolute;bottom:-80px;left:50%;transform:translateX(-50%);width:480px;height:200px;background:radial-gradient(ellipse,rgba(196,98,42,0.15) 0%,transparent 70%);pointer-events:none;}.hdr-rule{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:8px;}.hdr-line{flex:1;max-width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--ember));}.hdr-line.r{background:linear-gradient(90deg,var(--ember),transparent);}.brand{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,7vw,42px);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,0.9);line-height:1;}.brand-sub{font-size:9px;letter-spacing:0.26em;text-transform:uppercase;color:var(--ember);margin-top:5px;}.hdr-desc{font-size:10px;color:var(--smoke);margin-top:5px;letter-spacing:0.04em;line-height:1.6;}.tool-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--iron);overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:10;}.tool-tabs::-webkit-scrollbar{display:none;}.ttab{flex-shrink:0;padding:13px 16px;font-family:'Fira Code',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--smoke);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color 0.2s;position:relative;}.ttab::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--ember);transform:scaleX(0);transition:transform 0.25s ease;}.ttab:hover{color:var(--ash);}.ttab.active{color:var(--flame);}.ttab.active::after{transform:scaleX(1);}.tpanels{padding:20px 16px 20px;max-width:640px;margin:0 auto;}.tpanel{display:none;animation:fadeUp 0.3s ease;}.tpanel.active{display:block;}.card{background:var(--iron);border:1px solid var(--border);border-radius:var(--r);padding:20px 18px;margin-bottom:14px;position:relative;overflow:hidden;}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ember),transparent 55%);}.card-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;}.card-num{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--ember);letter-spacing:0.1em;}.card-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--cream);}.card-desc{font-size:10px;color:var(--smoke);margin-bottom:16px;line-height:1.7;letter-spacing:0.04em;}label{display:block;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ash);margin-bottom:5px;margin-top:13px;}label:first-of-type{margin-top:0;}input[type="number"],input[type="text"],input[type="time"],select,textarea{width:100%;background:var(--forge);border:1px solid var(--border);color:var(--linen);font-family:'Fira Code',monospace;font-size:13px;padding:10px 12px;border-radius:var(--r);appearance:none;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}input:focus,select:focus,textarea:focus{border-color:var(--ember);box-shadow:0 0 0 3px rgba(196,98,42,0.1);}</style></head><body><!-- Complete application body with all pages and functionality --></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Fork & Foundry</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Fork & Foundry</h1>
+        <nav>
+            <ul>
+                <li><a href="#kitchen-tools">Kitchen Tools</a></li>
+                <li><a href="#calculators">Calculators</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#comments">Comment Bank</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="kitchen-tools">
+            <h2>Kitchen Tools</h2>
+            <p>Explore our range of kitchen tools to make cooking easier.</p>
+            <!-- List of kitchen tools will be inserted here -->
+        </section>
+        <section id="calculators">
+            <h2>Calculators</h2>
+            <p>Use our calculators for recipe conversions and more!</p>
+            <!-- Calculators functionality will be inserted here -->
+        </section>
+        <section id="blog">
+            <h2>Blog Posts</h2>
+            <p>Read our latest blog posts for tips and recipes!</p>
+            <!-- Blog post entries will be inserted here -->
+        </section>
+        <section id="comments">
+            <h2>Comment Bank</h2>
+            <p>Check out our comment bank for ideas and inspiration.</p>
+            <!-- Comment bank will be inserted here -->
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Fork & Foundry. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
