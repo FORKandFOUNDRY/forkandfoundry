@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fork & Foundry — Forged in Service</title>
+<meta name="description" content="Free tools, resources, and real talk for kitchen operators and professional cooks. Fork & Foundry — Forged in Service."/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --forge:  #141210;
+  --iron:   #1e1914;
+  --slag:   #2a2318;
+  --border: #352d22;
+  --ember:  #c4622a;
+  --flame:  #e07840;
+  --gold:   #c8963c;
+  --ash:    #a89070;
+  --smoke:  #655848;
+  --linen:  #ede4d4;
+  --cream:  #f8f0e0;
+  --green:  #4a9a6a;
+  --yellow: #c8a030;
+  --red:    #b84040;
+  --r: 2px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--forge);color:var(--linen);font-family:'Fira Code',monospace;min-height:100vh;overflow-x:hidden;padding-bottom:70px;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px;}
+
+/* ── PAGES ── */
+.page{display:none;min-height:calc(100vh - 70px);animation:fadeUp 0.3s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ── GLOBAL NAV ── */
+.gnav{position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--iron);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0);}
+.gnav-btn{flex:1;padding:10px 2px 8px;background:none;border:none;color:var(--smoke);font-family:'Fira Code',monospace;font-size:7px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:color 0.2s;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.gnav-icon{font-size:16px;line-height:1;}
+.gnav-btn:hover{color:var(--ash);}
+.gnav-btn.active{color:var(--flame);}
+
+/* ── PAGE HEADER ── */
+.page-hdr{background:linear-gradient(180deg,#1e1610 0%,var(--forge) 100%);border-bottom:1px solid var(--border);padding:36px 20px 26px;text-align:center;position:relative;overflow:hidden;}
+.page-hdr::after{content:'';position:absolute;bottom:-80px;left:50%;transform:translateX(-50%);width:480px;height:200px;background:radial-gradient(ellipse,rgba(196,98,42,0.15) 0%,transparent 70%);pointer-events:none;}
+.hdr-rule{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:8px;}
+.hdr-line{flex:1;max-width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--ember));}
+.hdr-line.r{background:linear-gradient(90deg,var(--ember),transparent);}
+.brand{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,7vw,42px);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,0.9);line-height:1;}
+.brand-sub{font-size:9px;letter-spacing:0.26em;text-transform:uppercase;color:var(--ember);margin-top:5px;}
+.hdr-desc{font-size:10px;color:var(--smoke);margin-top:5px;letter-spacing:0.04em;line-height:1.6;}
+
+/* ── TOOL TABS ── */
+.tool-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--iron);overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:10;}
+.tool-tabs::-webkit-scrollbar{display:none;}
+.ttab{flex-shrink:0;padding:13px 16px;font-family:'Fira Code',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--smoke);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color 0.2s;position:relative;}
+.ttab::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--ember);transform:scaleX(0);transition:transform 0.25s ease;}
+.ttab:hover{color:var(--ash);}
+.ttab.active{color:var(--flame);}
+.ttab.active::after{transform:scaleX(1);}
+
+/* ── PANELS ── */
+.tpanels{padding:20px 16px 20px;max-width:640px;margin:0 auto;}
+.tpanel{display:none;animation:fadeUp 0.3s ease;}
+.tpanel.active{display:block;}
+
+/* ── CARD ── */
+.card{background:var(--iron);border:1px solid var(--border);border-radius:var(--r);padding:20px 18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ember),transparent 55%);}
+.card-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:4px;}
+.card-num{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--ember);letter-spacing:0.1em;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--cream);}
+.card-desc{font-size:10px;color:var(--smoke);margin-bottom:16px;line-height:1.7;letter-spacing:0.04em;}
+
+/* ── FORM ── */
+label{display:block;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ash);margin-bottom:5px;margin-top:13px;}
+label:first-of-type{margin-top:0;}
+input[type="number"],input[type="text"],input[type="time"],select,textarea{width:100%;background:var(--forge);border:1px solid var(--border);color:var(--linen);font-family:'Fira Code',monospace;font-size:13px;padding:10px 12px;border-radius:var(--r);appearance:none;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--ember);box-shadow:0 0 0 3px rgba(196,98,42,0.1);}
+textarea{resize:vertical;min-height:80px;}
+select option{background:#1e1914;}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+
+/* ── INGREDIENT ROW ── */
+.ing-row{display:grid;grid-template-columns:1fr 80px 68px 28px;gap:6px;align-items:center;margin-bottom:7px;}
+.ing-row input{font-size:12px;padding:8px 10px;}
+.del-btn{background:none;border:1px solid var(--border);color:var(--smoke);cursor:pointer;font-size:14px;border-radius:var(--r);width:28px;height:34px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.del-btn:hover{border-color:var(--ember);color:var(--ember);}
+
+/* ── PREP / WASTE ROWS ── */
+.prep-row{display:grid;grid-template-columns:1fr 90px 90px 28px;gap:6px;align-items:center;margin-bottom:7px;}
+.prep-row input{font-size:12px;padding:8px 10px;}
+.waste-row{display:grid;grid-template-columns:1fr 80px 80px 28px;gap:6px;align-items:center;margin-bottom:7px;}
+.waste-row input{font-size:12px;padding:8px 10px;}
+
+/* ── STAFF ROWS ── */
+.staff-row{display:grid;grid-template-columns:1fr 80px 28px;gap:6px;align-items:center;margin-bottom:7px;}
+.staff-row input{font-size:12px;padding:8px 10px;}
+
+/* ── BUTTONS ── */
+.btn{margin-top:16px;width:100%;padding:13px;background:var(--ember);color:var(--forge);font-family:'Fira Code',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;border:none;border-radius:var(--r);cursor:pointer;transition:background 0.2s,transform 0.1s;}
+.btn:hover{background:var(--flame);}
+.btn:active{transform:scale(0.99);}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--smoke);margin-top:8px;}
+.btn-ghost:hover{border-color:var(--ember);color:var(--ash);background:transparent;}
+.btn-sm{padding:8px;font-size:9px;margin-top:8px;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-danger:hover{background:#c84848;}
+.btn-print{background:var(--iron);border:1px solid var(--ember);color:var(--flame);}
+.btn-print:hover{background:rgba(196,98,42,0.1);}
+
+/* ── RESULTS ── */
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+.result-box{background:var(--forge);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;transition:border-color 0.3s;}
+.result-box.hl{border-color:var(--ember);}
+.rb-label{font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--smoke);margin-bottom:6px;}
+.rb-val{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--cream);line-height:1;}
+.rb-val.c-good{color:var(--green);}
+.rb-val.c-warn{color:var(--yellow);}
+.rb-val.c-bad{color:var(--red);}
+.rb-sub{font-size:9px;color:var(--smoke);margin-top:4px;}
+
+.verdict{margin-top:10px;padding:13px 15px;border-radius:var(--r);border:1px solid;display:none;animation:fadeUp 0.3s ease;}
+.verdict.show{display:block;}
+.verdict.v-good{border-color:var(--green);background:rgba(74,154,106,0.08);}
+.verdict.v-warn{border-color:var(--yellow);background:rgba(200,160,48,0.08);}
+.verdict.v-bad{border-color:var(--red);background:rgba(184,64,64,0.08);}
+.verdict-lbl{font-size:8px;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:5px;}
+.verdict.v-good .verdict-lbl{color:var(--green);}
+.verdict.v-warn .verdict-lbl{color:var(--yellow);}
+.verdict.v-bad .verdict-lbl{color:var(--red);}
+.verdict-txt{font-size:11px;color:var(--ash);line-height:1.6;}
+
+/* ── TABLE ── */
+.dt{width:100%;border-collapse:collapse;margin-top:10px;}
+.dt th{font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--smoke);text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);}
+.dt td{font-size:12px;padding:8px;border-bottom:1px solid rgba(53,45,34,0.5);color:var(--linen);}
+.dt td.r{text-align:right;}
+.dt td.ac{color:var(--flame);}
+.dt td.good{color:var(--green);}
+.dt td.warn{color:var(--yellow);}
+.dt td.bad{color:var(--red);}
+.dt tr:last-child td{border-bottom:none;}
+
+/* ── DIVIDER ── */
+.div{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:15px 0;position:relative;}
+.div-lbl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--iron);padding:0 10px;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--smoke);}
+
+/* ── GAUGE ── */
+.gauge-wrap{margin-top:12px;}
+.gauge-row{display:flex;justify-content:space-between;margin-bottom:5px;}
+.gauge-lbl{font-size:9px;color:var(--smoke);}
+.gauge-val{font-size:9px;color:var(--ash);}
+.gauge-track{height:6px;background:var(--forge);border-radius:3px;border:1px solid var(--border);overflow:hidden;}
+.gauge-fill{height:100%;width:0%;border-radius:3px;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1),background 0.3s;}
+.gauge-zones{display:flex;justify-content:space-between;margin-top:4px;font-size:7px;color:var(--smoke);}
+
+/* ── PRESET BTNS ── */
+.preset-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
+.pbtn{padding:8px 4px;background:var(--forge);border:1px solid var(--border);color:var(--smoke);font-family:'Fira Code',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;border-radius:var(--r);cursor:pointer;transition:all 0.2s;text-align:center;line-height:1.6;}
+.pbtn:hover{border-color:var(--ember);color:var(--ash);}
+.pbtn.sel{border-color:var(--ember);color:var(--flame);background:rgba(196,98,42,0.1);}
+
+/* ── BADGE ── */
+.badge{font-size:8px;letter-spacing:0.14em;text-transform:uppercase;padding:3px 8px;border-radius:1px;flex-shrink:0;}
+.badge-free{background:rgba(196,98,42,0.15);color:var(--ember);border:1px solid rgba(196,98,42,0.3);}
+.badge-soon{background:rgba(80,80,80,0.2);color:var(--smoke);border:1px solid var(--border);}
+.badge-ig{background:rgba(100,80,160,0.15);color:#a090e0;border:1px solid rgba(100,80,160,0.3);}
+.badge-new{background:rgba(200,150,60,0.15);color:var(--gold);border:1px solid rgba(200,150,60,0.3);}
+
+/* ── HOME PAGE ── */
+.home-wrap{max-width:480px;margin:0 auto;padding:0 18px 20px;position:relative;z-index:1;}
+.hero{padding:48px 0 28px;text-align:center;position:relative;}
+.hero-glow{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:340px;height:200px;background:radial-gradient(ellipse at 50% 30%,rgba(196,98,42,0.14) 0%,transparent 70%);pointer-events:none;}
+.anvil{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border:1px solid var(--border);border-radius:50%;margin-bottom:16px;background:var(--iron);position:relative;}
+.anvil::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(196,98,42,0.2);}
+.wordmark{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,10vw,50px);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,0.9);line-height:0.92;}
+.wordmark-amp{display:block;font-style:italic;font-weight:300;font-size:0.44em;letter-spacing:0.28em;color:var(--ash);margin:6px 0 4px;}
+.tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(14px,4vw,17px);color:var(--ash);margin-top:10px;}
+.hero-handle{margin-top:7px;font-size:10px;letter-spacing:0.2em;color:var(--smoke);}
+.hero-handle a{color:var(--ember);text-decoration:none;}
+
+.manifesto{margin:20px 0;border:1px solid var(--border);border-radius:var(--r);padding:20px 18px;background:var(--iron);position:relative;overflow:hidden;}
+.manifesto::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ember),var(--gold),transparent 70%);}
+.mani-eye{font-size:8px;letter-spacing:0.26em;text-transform:uppercase;color:var(--ember);margin-bottom:10px;}
+.mani-text{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,5vw,20px);font-weight:600;line-height:1.4;color:var(--cream);}
+.mani-text em{font-style:italic;color:var(--flame);}
+.mani-sub{font-size:10px;color:var(--smoke);margin-top:10px;line-height:1.7;letter-spacing:0.03em;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:0 0 20px;}
+.stat-box{background:var(--iron);border:1px solid var(--border);border-radius:var(--r);padding:12px 8px;text-align:center;}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--cream);line-height:1;}
+.stat-lbl{font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--smoke);margin-top:4px;line-height:1.4;}
+
+.sec-div{display:flex;align-items:center;gap:12px;margin:22px 0 14px;}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border));}
+.sec-line.r{background:linear-gradient(90deg,var(--border),transparent);}
+.sec-lbl{font-size:8px;letter-spacing:0.26em;text-transform:uppercase;color:var(--smoke);white-space:nowrap;}
+
+.lcard{display:flex;align-items:center;gap:12px;background:var(--iron);border:1px solid var(--border);border-radius:var(--r);padding:14px 15px;text-decoration:none;color:var(--linen);transition:border-color 0.2s,background 0.2s,transform 0.15s;position:relative;overflow:hidden;margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.lcard::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--ember),transparent 55%);opacity:0;transition:opacity 0.2s;}
+.lcard:hover{border-color:var(--ember);background:rgba(196,98,42,0.05);transform:translateY(-1px);}
+.lcard:hover::before{opacity:1;}
+.lcard:active{transform:scale(0.99);}
+.lcard-icon{width:36px;height:36px;flex-shrink:0;border:1px solid var(--border);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--forge);}
+.lcard-body{flex:1;min-width:0;}
+.lcard-title{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--cream);display:block;}
+.lcard-desc{font-size:9px;letter-spacing:0.06em;color:var(--smoke);margin-top:2px;display:block;line-height:1.5;}
+.lcard-arrow{font-size:13px;color:var(--smoke);flex-shrink:0;transition:color 0.2s,transform 0.2s;}
+.lcard:hover .lcard-arrow{color:var(--ember);transform:translateX(2px);}
+.lcard.disabled{opacity:0.5;pointer-events:none;}
+
+/* ── ABOUT ── */
+.about-wrap{max-width:580px;margin:0 auto;padding:28px 18px 20px;position:relative;z-index:1;}
+.about-section{margin-bottom:28px;}
+.about-section h2{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,6vw,30px);font-weight:600;color:var(--cream);margin-bottom:12px;letter-spacing:0.02em;}
+.about-section h2 em{font-style:italic;color:var(--flame);}
+.about-section p{font-size:11px;color:var(--ash);line-height:1.9;letter-spacing:0.04em;margin-bottom:10px;}
+.about-section p strong{color:var(--linen);font-weight:500;}
+.pillar-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.pillar{background:var(--iron);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden;}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ember),transparent);}
+.pillar-icon{font-size:22px;margin-bottom:8px;}
+.pillar-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--cream);margin-bottom:4px;}
+.pillar-desc{font-size:9px;color:var(--smoke);line-height:1.6;letter-spacing:0.04em;}
+.big-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(20px,5vw,26px);color:var(--cream);line-height:1.4;border-left:3px solid var(--ember);padding-left:18px;margin:20px 0;}
+.team-note{background:var(--iron);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-top:16px;}
+.team-note-title{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--cream);margin-bottom:8px;}
+.team-note-text{font-size:10px;color:var(--smoke);line-height:1.7;letter-spacing:0.04em;}
+
+/* ── BLOG ── */
+.blog-wrap{max-width:580px;margin:0 auto;padding:20px 18px;position:relative;z-index:1;}
+.blog-card{background:var(--iron);border:1px solid var(--border);border-radius:var(--r);padding:20px 18px;margin-bottom:12px;cursor:pointer;transition:border-color 0.2s,transform 0.15s;position:relative;overflow:hidden;}
+.blog-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ember),transparent 55%);}
+.blog-card:hover{border-color:var(--ember);transform:translateY(-1px);}
+.blog-tag{font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ember);margin-bottom:8px;}
+.blog-title{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,5vw,22px);font-weight:600;color:var(--cream);line-height:1.3;margin-bottom:8px;}
+.blog-excerpt{font-size:10px;color:var(--smoke);line-height:1.7;letter-spacing:0.03em;margin-bottom:12px;}
+.blog-meta{display:flex;align-items:center;justify-content:space-between;}
+.blog-date{font-size:8px;letter-spacing:0.12em;color:var(--smoke);}
+.blog-read{font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ember);}
+
+/* ── POST ── */
+.post-wrap{max-width:580px;margin:0 auto;padding:20px 18px;position:relative;z-index:1;display:none;}
+.post-wrap.active{display:block;}
+.post-back{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--smoke);cursor:pointer;margin-bottom:20px;transition:color 0.2s;}
+.post-back:hover{color:var(--ember);}
+.post-tag{font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ember);margin-bottom:10px;}
+.post-title{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,7vw,34px);font-weight:700;color:var(--cream);line-height:1.2;margin-bottom:10px;}
+.post-meta{font-size:8px;letter-spacing:0.12em;color:var(--smoke);margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.post-body p{font-size:11px;color:var(--ash);line-height:1.9;letter-spacing:0.04em;margin-bottom:14px;}
+.post-body p strong{color:var(--linen);font-weight:500;}
+.post-body h3{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--cream);margin:20px 0 8px;}
+.post-body blockquote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--cream);border-left:3px solid var(--ember);padding-left:16px;margin:16px 0;line-height:1.5;}
+.post-body ul{margin:10px 0 14px 0;padding-left:0;list-style:none;}
+.post-body ul li{font-size:11px;color:var(--ash);line-height:1.8;letter-spacing:0.04em;padding-left:16px;position:relative;}
+.post-body ul li::before{content:'—';position:absolute;left:0;color:var(--ember);}
+
+/* ── COMMENT BANK ── */
+.cbank-wrap{max-width:620px;margin:0 auto;padding:14px 16px 20px;position:relative;z-index:1;}
+.comment-card-item{background:var(--iron);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s;}
+.comment-card-item:hover{border-color:var(--ember);}
+.cc-text{font-size:12px;line-height:1.7;color:var(--linen);}
+.cc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+.cc-tone{font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--smoke);border:1px solid var(--border);padding:3px 7px;border-radius:1px;}
+.cc-copy{font-size:9px;color:var(--smoke);}
+
+/* ── PRINT PREP LIST ── */
+.print-list{display:none;}
+@media print{
+  .gnav,.page-hdr,.tool-tabs,.btn,.card::before{display:none!important;}
+  body{background:#fff;color:#000;padding:0;}
+  .print-list{display:block;}
+  .no-print{display:none!important;}
+}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ember);color:var(--forge);font-family:'Fira Code',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;padding:10px 20px;border-radius:var(--r);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:600;white-space:nowrap;pointer-events:none;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── SITE FOOTER ── */
+.site-footer{text-align:center;padding:20px;border-top:1px solid var(--border);font-size:9px;letter-spacing:0.14em;color:var(--smoke);}
+.site-footer a{color:var(--ember);text-decoration:none;}
+.sf-brand{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ash);display:block;margin-bottom:4px;}
+.sf-motto{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:var(--smoke);display:block;}
+
+@media(max-width:400px){
+  .ing-row{grid-template-columns:1fr 68px 60px 24px;gap:5px;}
+  .prep-row{grid-template-columns:1fr 76px 76px 24px;gap:5px;}
+  .waste-row{grid-template-columns:1fr 70px 70px 24px;gap:5px;}
+  .staff-row{grid-template-columns:1fr 70px 24px;gap:5px;}
+  .result-grid{grid-template-columns:1fr;}
+  .row-2{grid-template-columns:1fr;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .pillar-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+  HOME
+══════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+<div class="home-wrap">
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="anvil"><span style="font-size:24px">🍴</span></div>
+    <div class="hdr-rule"><div class="hdr-line"></div><div class="hdr-line r"></div></div>
+    <div class="wordmark">Fork<span class="wordmark-amp">&amp;</span>Foundry</div>
+    <div class="tagline">Survive Together. Thrive Through Systems.</div>
+    <div class="hero-handle"><a href="https://instagram.com/forkansfoundry" target="_blank">@forkansfoundry</a> · Est. 2026</div>
+  </div>
+
+  <div class="manifesto">
+    <div class="mani-eye">Forged in Service</div>
+    <div class="mani-text">Real kitchens. Real people.<br/><em>Real systems.</em></div>
+    <div class="mani-sub">Fork & Foundry is built for the cooks, operators, and kitchen leaders who show up every day and do the work. Free tools, real content, and a community built to last.</div>
+  </div>
+
+
+
+  <div class="sec-div"><div class="sec-line"></div><div class="sec-lbl">Kitchen Tools</div><div class="sec-line r"></div></div>
+  <div class="lcard" onclick="goTo('tools')"><div class="lcard-icon">⚖️</div><div class="lcard-body"><span class="lcard-title">Kitchen Toolkit</span><span class="lcard-desc">Conversions · Baker's % · Scaling · Temperature</span></div><span class="badge badge-free">Free</span><span class="lcard-arrow">→</span></div>
+  <div class="lcard" onclick="goTo('foodcost')"><div class="lcard-icon">💰</div><div class="lcard-body"><span class="lcard-title">Food Cost Calculator</span><span class="lcard-desc">Recipe cost · Menu pricing · Margin check</span></div><span class="badge badge-free">Free</span><span class="lcard-arrow">→</span></div>
+  <div class="lcard" onclick="goTo('prep')"><div class="lcard-icon">📋</div><div class="lcard-body"><span class="lcard-title">Prep List Generator</span><span class="lcard-desc">Build · Organize · Print for service</span></div><span class="badge badge-free">Free</span><span class="lcard-arrow">→</span></div>
+  <div class="lcard" onclick="goTo('waste')"><div class="lcard-icon">🗑️</div><div class="lcard-body"><span class="lcard-title">Waste Log Tracker</span><span class="lcard-desc">Track waste · See cost impact · Tighten margins</span></div><span class="badge badge-free">Free</span><span class="lcard-arrow">→</span></div>
+  <div class="lcard" onclick="goTo('tip')"><div class="lcard-icon">💵</div><div class="lcard-body"><span class="lcard-title">Tip Calculator</span><span class="lcard-desc">Split tips by hours or points · Fair every time</span></div><span class="badge badge-free">Free</span><span class="lcard-arrow">→</span></div>
+
+  <div class="sec-div"><div class="sec-line"></div><div class="sec-lbl">Resources</div><div class="sec-line r"></div></div>
+  <div class="sec-div"><div class="sec-line"></div><div class="sec-lbl">Resources</div><div class="sec-line r"></div></div>
+  <a class="lcard" href="https://forkandfoundry.gumroad.com/l/hfhys" target="_blank"><div class="lcard-icon">📒</div><div class="lcard-body"><span class="lcard-title">The Modern Chef's Handbook</span><span class="lcard-desc">Our full systems playbook — get it on Gumroad</span></div><span class="badge badge-new">Get It</span><span class="lcard-arrow">→</span></a>
+  <div class="lcard" onclick="goTo('blog')"><div class="lcard-icon">📖</div><div class="lcard-body"><span class="lcard-title">The Foundry Blog</span><span class="lcard-desc">Systems, strategy, and real talk for operators</span></div><span class="badge badge-new">New</span><span class="lcard-arrow">→</span></div>
+
+  <div class="sec-div"><div class="sec-line"></div><div class="sec-lbl">Follow</div><div class="sec-line r"></div></div>
+  <a class="lcard" href="https://instagram.com/forkansfoundry" target="_blank"><div class="lcard-icon">📸</div><div class="lcard-body"><span class="lcard-title">Instagram</span><span class="lcard-desc">@forkansfoundry · Real kitchens. Real systems.</span></div><span class="badge badge-ig">IG</span><span class="lcard-arrow">→</span></a>
+
+  <div class="site-footer"><span class="sf-brand">Fork &amp; Foundry</span><span class="sf-motto">Forged in Service</span></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  KITCHEN TOOLKIT
+══════════════════════════════════════════════ -->
+<div class="page" id="page-tools">
+  <div class="page-hdr">
+    <div class="hdr-rule"><div class="hdr-line"></div><span style="color:var(--ember);font-size:13px">🍴</span><div class="hdr-line r"></div></div>
+    <div class="brand">Kitchen Toolkit</div>
+    <div class="brand-sub">Fork &amp; Foundry</div>
+  </div>
+  <div class="tool-tabs">
+    <button class="ttab active" onclick="tt('convert',this,'tools')">Convert</button>
+    <button class="ttab" onclick="tt('bakers',this,'tools')">Baker's %</button>
+    <button class="ttab" onclick="tt('scale',this,'tools')">Scale</button>
+    <button class="ttab" onclick="tt('temp',this,'tools')">Temp</button>
+  </div>
+  <div class="tpanels">
+
+    <div class="tpanel active" id="tp-convert">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">01</span><span class="card-title">Unit Converter</span></div>
+        <div class="card-desc">Weight and volume conversions for the professional kitchen.</div>
+        <label>Category</label>
+        <select id="conv-cat" onchange="updateConvUnits()"><option value="weight">Weight</option><option value="volume">Volume</option></select>
+        <div class="row-2" style="margin-top:12px">
+          <div><label>Amount</label><input type="number" id="conv-amt" placeholder="0" step="any"/></div>
+          <div><label>From</label><select id="conv-from"></select></div>
+        </div>
+        <label>To</label><select id="conv-to"></select>
+        <button class="btn" onclick="calcConvert()">Convert</button>
+        <div id="conv-res" style="display:none">
+          <div class="result-grid">
+            <div class="result-box hl"><div class="rb-label">Result</div><div class="rb-val" id="conv-out">—</div></div>
+            <div class="result-box"><div class="rb-label">Full equation</div><div class="rb-val" style="font-size:13px;padding-top:4px" id="conv-eq">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tpanel" id="tp-bakers">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">02</span><span class="card-title">Baker's Percentage</span></div>
+        <div class="card-desc">Total flour = 100%. All other ingredients expressed relative to flour weight.</div>
+        <label>Flour(s)</label>
+        <div id="flour-rows"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addFlourRow()">+ Add Flour</button>
+        <div class="div"><div class="div-lbl">other ingredients</div></div>
+        <div id="bkr-rows"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addBkrRow()">+ Add Ingredient</button>
+        <button class="btn" style="margin-top:16px" onclick="calcBakers()">Calculate %</button>
+        <div id="bkr-res" style="display:none;margin-top:12px"><table class="dt" id="bkr-table"></table></div>
+      </div>
+    </div>
+
+    <div class="tpanel" id="tp-scale">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">03</span><span class="card-title">Recipe Scaler</span></div>
+        <div class="card-desc">Scale any formula by multiplier, piece count, or yield.</div>
+        <label>Scale Method</label>
+        <select id="scale-method" onchange="updateScaleMethod()">
+          <option value="mult">Multiplier (e.g. ×2)</option>
+          <option value="pieces">By Piece Count</option>
+          <option value="yield">By Total Yield (g)</option>
+        </select>
+        <div id="scale-method-inputs"></div>
+        <div class="div"><div class="div-lbl">ingredients</div></div>
+        <div id="scale-rows"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addScaleRow()">+ Add Ingredient</button>
+        <button class="btn" style="margin-top:16px" onclick="calcScale()">Scale Recipe</button>
+        <div id="scale-res" style="display:none;margin-top:12px">
+          <table class="dt" id="scale-table"></table>
+          <div style="font-size:10px;color:var(--smoke);margin-top:6px" id="scale-mx"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tpanel" id="tp-temp">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">04</span><span class="card-title">Temperature</span></div>
+        <div class="card-desc">°F · °C · Gas Mark conversions</div>
+        <div class="preset-row">
+          <button class="pbtn sel" id="tb-fc" onclick="setTempMode('fc',this)">°F → °C</button>
+          <button class="pbtn" id="tb-cf" onclick="setTempMode('cf',this)">°C → °F</button>
+          <button class="pbtn" id="tb-gas" onclick="setTempMode('gas',this)">Gas Mark</button>
+        </div>
+        <label id="temp-lbl" style="margin-top:12px">Temperature (°F)</label>
+        <input type="number" id="temp-in" placeholder="350" step="any"/>
+        <button class="btn" onclick="calcTemp()">Convert</button>
+        <div id="temp-res" style="display:none">
+          <div class="result-grid">
+            <div class="result-box hl"><div class="rb-label">Result</div><div class="rb-val" id="temp-out">—</div></div>
+            <div class="result-box"><div class="rb-label">Equivalent</div><div class="rb-val" style="font-size:13px;padding-top:4px" id="temp-eq">—</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-num">—</span><span class="card-title">Oven Reference</span></div>
+        <table class="dt"><thead><tr><th>Description</th><th>°F</th><th>°C</th><th class="r">Gas</th></tr></thead><tbody>
+          <tr><td>Very Low</td><td>250</td><td>120</td><td class="ac r">½</td></tr>
+          <tr><td>Low</td><td>300</td><td>150</td><td class="ac r">2</td></tr>
+          <tr><td>Moderate</td><td>350</td><td>175</td><td class="ac r">4</td></tr>
+          <tr><td>Hot</td><td>400</td><td>205</td><td class="ac r">6</td></tr>
+          <tr><td>Very Hot</td><td>450</td><td>230</td><td class="ac r">8</td></tr>
+          <tr><td>Broil</td><td>500+</td><td>260+</td><td class="ac r">9+</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  FOOD COST
+══════════════════════════════════════════════ -->
+<div class="page" id="page-foodcost">
+  <div class="page-hdr">
+    <div class="hdr-rule"><div class="hdr-line"></div><span style="color:var(--ember);font-size:13px">🍴</span><div class="hdr-line r"></div></div>
+    <div class="brand">Food Cost</div>
+    <div class="brand-sub">Fork &amp; Foundry · Know Your Numbers</div>
+  </div>
+  <div class="tool-tabs">
+    <button class="ttab active" onclick="tt('fc-recipe',this,'foodcost')">Recipe Cost</button>
+    <button class="ttab" onclick="tt('fc-menu',this,'foodcost')">Menu Price</button>
+    <button class="ttab" onclick="tt('fc-margin',this,'foodcost')">Margin Check</button>
+  </div>
+  <div class="tpanels">
+
+    <div class="tpanel active" id="tp-fc-recipe">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">01</span><span class="card-title">Recipe Cost Builder</span></div>
+        <div class="card-desc">Add ingredients with purchase cost and % used per recipe. Get total and cost per portion.</div>
+        <div class="row-2">
+          <div><label>Recipe Name</label><input type="text" id="fc-name" placeholder="e.g. Focaccia"/></div>
+          <div><label>Portions Yielded</label><input type="number" id="fc-portions" placeholder="12" step="1" min="1"/></div>
+        </div>
+        <div class="div"><div class="div-lbl">ingredients</div></div>
+        <div style="display:grid;grid-template-columns:1fr 80px 68px 28px;gap:6px;margin-bottom:5px">
+          <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Ingredient</span>
+          <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Cost ($)</span>
+          <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Used %</span>
+          <span></span>
+        </div>
+        <div id="fc-rows"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addFCRow()">+ Add Ingredient</button>
+        <button class="btn" onclick="calcFC()">Calculate Recipe Cost</button>
+        <div id="fc-res" style="display:none">
+          <div class="result-grid">
+            <div class="result-box hl"><div class="rb-label">Total Cost</div><div class="rb-val" id="fc-total">—</div></div>
+            <div class="result-box hl"><div class="rb-label">Cost / Portion</div><div class="rb-val" id="fc-per">—</div></div>
+          </div>
+          <table class="dt" id="fc-breakdown"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tpanel" id="tp-fc-menu">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">02</span><span class="card-title">Menu Price Calculator</span></div>
+        <div class="card-desc">Enter cost per portion + target FC% to get recommended menu price and gross profit.</div>
+        <label>Cost Per Portion ($)</label>
+        <input type="number" id="mp-cost" placeholder="4.50" step="0.01" min="0"/>
+        <label>Target Food Cost %</label>
+        <div class="preset-row">
+          <button class="pbtn" onclick="setFCP(25,this)">25%<br/><span style="font-size:7px;opacity:0.7">Fine Dining</span></button>
+          <button class="pbtn" onclick="setFCP(30,this)">30%<br/><span style="font-size:7px;opacity:0.7">Casual</span></button>
+          <button class="pbtn" onclick="setFCP(35,this)">35%<br/><span style="font-size:7px;opacity:0.7">Bar / Pub</span></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <input type="number" id="mp-target" placeholder="Custom %" step="0.1" min="1" max="99" style="flex:1" oninput="clearFCP()"/>
+          <span style="font-size:12px;color:var(--ash)">%</span>
+        </div>
+        <label>Labor / Portion ($) <span style="opacity:0.5">optional</span></label>
+        <input type="number" id="mp-labor" placeholder="1.50" step="0.01" min="0"/>
+        <button class="btn" onclick="calcMP()">Calculate Menu Price</button>
+        <div id="mp-res" style="display:none">
+          <div class="result-grid">
+            <div class="result-box hl"><div class="rb-label">Recommended Price</div><div class="rb-val" id="mp-price">—</div><div class="rb-sub">at target FC%</div></div>
+            <div class="result-box hl"><div class="rb-label">Gross Profit</div><div class="rb-val" id="mp-profit">—</div><div class="rb-sub">per portion</div></div>
+          </div>
+          <div class="gauge-wrap">
+            <div class="gauge-row"><span class="gauge-lbl">Food Cost %</span><span class="gauge-val" id="mp-glbl">—</span></div>
+            <div class="gauge-track"><div class="gauge-fill" id="mp-gauge"></div></div>
+            <div class="gauge-zones"><span>0%</span><span style="color:var(--green)">25%</span><span style="color:var(--yellow)">35%</span><span>50%+</span></div>
+          </div>
+          <div class="verdict" id="mp-v"><div class="verdict-lbl" id="mp-vl"></div><div class="verdict-txt" id="mp-vt"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tpanel" id="tp-fc-margin">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">03</span><span class="card-title">Margin Check</span></div>
+        <div class="card-desc">Enter your current menu price and costs. Get real FC%, gross profit, and a verdict.</div>
+        <div class="row-2">
+          <div><label>Menu Price ($)</label><input type="number" id="mc-price" placeholder="18.00" step="0.01" min="0"/></div>
+          <div><label>Ingredient Cost ($)</label><input type="number" id="mc-cost" placeholder="5.40" step="0.01" min="0"/></div>
+        </div>
+        <div class="row-2">
+          <div><label>Labor / Portion ($) <span style="opacity:0.5">opt</span></label><input type="number" id="mc-labor" placeholder="2.00" step="0.01" min="0"/></div>
+          <div><label>Overhead / Portion ($) <span style="opacity:0.5">opt</span></label><input type="number" id="mc-overhead" placeholder="1.00" step="0.01" min="0"/></div>
+        </div>
+        <label>Concept Type</label>
+        <select id="mc-concept">
+          <option value="fine">Fine Dining — target 25–28%</option>
+          <option value="casual" selected>Casual / Full Service — target 28–32%</option>
+          <option value="bar">Bar / Pub — target 32–38%</option>
+          <option value="fast">Fast Casual — target 28–35%</option>
+        </select>
+        <button class="btn" onclick="calcMC()">Check My Margins</button>
+        <div id="mc-res" style="display:none">
+          <div class="result-grid">
+            <div class="result-box"><div class="rb-label">Food Cost %</div><div class="rb-val" id="mc-fc">—</div></div>
+            <div class="result-box"><div class="rb-label">Gross Profit</div><div class="rb-val" id="mc-gp">—</div><div class="rb-sub" id="mc-gp-sub"></div></div>
+          </div>
+          <div class="gauge-wrap">
+            <div class="gauge-row"><span class="gauge-lbl">Food Cost %</span><span class="gauge-val" id="mc-glbl">—</span></div>
+            <div class="gauge-track"><div class="gauge-fill" id="mc-gauge"></div></div>
+            <div class="gauge-zones"><span>0%</span><span style="color:var(--green)">25%</span><span style="color:var(--yellow)">35%</span><span>50%+</span></div>
+          </div>
+          <div class="verdict" id="mc-v"><div class="verdict-lbl" id="mc-vl"></div><div class="verdict-txt" id="mc-vt"></div></div>
+          <div id="mc-prime" style="display:none">
+            <div class="div"><div class="div-lbl">prime cost</div></div>
+            <div class="result-grid">
+              <div class="result-box"><div class="rb-label">Prime Cost %</div><div class="rb-val" id="mc-pp">—</div><div class="rb-sub">Food + Labor</div></div>
+              <div class="result-box"><div class="rb-label">Net Margin</div><div class="rb-val" id="mc-net">—</div><div class="rb-sub">After all costs</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-num">—</span><span class="card-title">Industry Benchmarks</span></div>
+        <table class="dt"><thead><tr><th>Concept</th><th>Food Cost</th><th class="r">Prime Cost</th></tr></thead><tbody>
+          <tr><td>Fine Dining</td><td>25–28%</td><td class="ac r">55–60%</td></tr>
+          <tr><td>Casual Dining</td><td>28–32%</td><td class="ac r">55–65%</td></tr>
+          <tr><td>Bar / Pub</td><td>32–38%</td><td class="ac r">60–65%</td></tr>
+          <tr><td>Fast Casual</td><td>28–35%</td><td class="ac r">55–65%</td></tr>
+          <tr><td>Catering</td><td>25–35%</td><td class="ac r">50–60%</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  PREP LIST
+══════════════════════════════════════════════ -->
+<div class="page" id="page-prep">
+  <div class="page-hdr">
+    <div class="hdr-rule"><div class="hdr-line"></div><span style="color:var(--ember);font-size:13px">🍴</span><div class="hdr-line r"></div></div>
+    <div class="brand">Prep List</div>
+    <div class="brand-sub">Fork &amp; Foundry · Run a Clean Service</div>
+  </div>
+  <div class="tpanels" style="padding-top:20px">
+    <div class="card">
+      <div class="card-hd"><span class="card-num">01</span><span class="card-title">Prep List Generator</span></div>
+      <div class="card-desc">Build your daily prep list. Add tasks with station, quantity, and priority. Print or screenshot for service.</div>
+      <div class="row-2">
+        <div><label>Date</label><input type="text" id="prep-date" placeholder="e.g. Mon May 5"/></div>
+        <div><label>Service</label><select id="prep-service"><option>Lunch</option><option>Dinner</option><option>Brunch</option><option>All Day</option></select></div>
+      </div>
+      <div class="div"><div class="div-lbl">prep tasks</div></div>
+      <div style="display:grid;grid-template-columns:1fr 90px 90px 28px;gap:6px;margin-bottom:5px">
+        <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Task</span>
+        <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Station</span>
+        <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Qty / Note</span>
+        <span></span>
+      </div>
+      <div id="prep-rows"></div>
+      <button class="btn btn-ghost btn-sm" onclick="addPrepRow()">+ Add Task</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+        <button class="btn" onclick="buildPrepList()">Build List</button>
+        <button class="btn btn-print" onclick="printPrep()" id="prep-print-btn" style="display:none">🖨 Print</button>
+      </div>
+      <div id="prep-output" style="display:none;margin-top:16px">
+        <div style="background:var(--forge);border:1px solid var(--border);border-radius:var(--r);padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--cream)" id="prep-list-title">Prep List</div>
+              <div style="font-size:9px;color:var(--smoke);margin-top:2px" id="prep-list-sub"></div>
+            </div>
+            <div style="font-size:20px">🍴</div>
+          </div>
+          <table class="dt" id="prep-table"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  WASTE LOG
+══════════════════════════════════════════════ -->
+<div class="page" id="page-waste">
+  <div class="page-hdr">
+    <div class="hdr-rule"><div class="hdr-line"></div><span style="color:var(--ember);font-size:13px">🍴</span><div class="hdr-line r"></div></div>
+    <div class="brand">Waste Log</div>
+    <div class="brand-sub">Fork &amp; Foundry · Control What You Lose</div>
+  </div>
+  <div class="tpanels" style="padding-top:20px">
+    <div class="card">
+      <div class="card-hd"><span class="card-num">01</span><span class="card-title">Waste Log Tracker</span></div>
+      <div class="card-desc">Log wasted items with quantity and cost. See total waste value and identify your biggest problem areas.</div>
+      <div class="row-2">
+        <div><label>Period</label><input type="text" id="waste-period" placeholder="e.g. Week of May 5"/></div>
+        <div><label>Station / Area</label><input type="text" id="waste-station" placeholder="e.g. All / Grill"/></div>
+      </div>
+      <div class="div"><div class="div-lbl">waste entries</div></div>
+      <div style="display:grid;grid-template-columns:1fr 80px 80px 28px;gap:6px;margin-bottom:5px">
+        <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Item</span>
+        <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Qty</span>
+        <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Cost ($)</span>
+        <span></span>
+      </div>
+      <div id="waste-rows"></div>
+      <button class="btn btn-ghost btn-sm" onclick="addWasteRow()">+ Add Entry</button>
+      <button class="btn" onclick="calcWaste()">Calculate Waste</button>
+      <div id="waste-res" style="display:none">
+        <div class="result-grid">
+          <div class="result-box hl"><div class="rb-label">Total Waste Cost</div><div class="rb-val c-bad" id="waste-total">—</div></div>
+          <div class="result-box"><div class="rb-label">Entries Logged</div><div class="rb-val" id="waste-count">—</div></div>
+        </div>
+        <div class="div"><div class="div-lbl">waste breakdown</div></div>
+        <table class="dt" id="waste-table"></table>
+        <div class="verdict v-bad show" style="margin-top:12px">
+          <div class="verdict-lbl" style="color:var(--yellow)">⚠ Focus Area</div>
+          <div class="verdict-txt" id="waste-focus"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  TIP CALCULATOR
+══════════════════════════════════════════════ -->
+<div class="page" id="page-tip">
+  <div class="page-hdr">
+    <div class="hdr-rule"><div class="hdr-line"></div><span style="color:var(--ember);font-size:13px">🍴</span><div class="hdr-line r"></div></div>
+    <div class="brand">Tip Calculator</div>
+    <div class="brand-sub">Fork &amp; Foundry · Fair Every Time</div>
+  </div>
+  <div class="tool-tabs">
+    <button class="ttab active" onclick="tt('tip-hrs',this,'tip')">By Hours</button>
+    <button class="ttab" onclick="tt('tip-pts',this,'tip')">By Points</button>
+  </div>
+  <div class="tpanels">
+
+    <div class="tpanel active" id="tp-tip-hrs">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">01</span><span class="card-title">Split by Hours Worked</span></div>
+        <div class="card-desc">Enter total tip pool and each staff member's hours. Tips split proportionally.</div>
+        <label>Total Tip Pool ($)</label>
+        <input type="number" id="tip-pool-hrs" placeholder="0.00" step="0.01" min="0"/>
+        <div class="div"><div class="div-lbl">staff</div></div>
+        <div style="display:grid;grid-template-columns:1fr 80px 28px;gap:6px;margin-bottom:5px">
+          <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Name</span>
+          <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Hours</span>
+          <span></span>
+        </div>
+        <div id="tip-hrs-rows"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addTipHrsRow()">+ Add Staff Member</button>
+        <button class="btn" onclick="calcTipHrs()">Calculate Split</button>
+        <div id="tip-hrs-res" style="display:none">
+          <div class="result-grid">
+            <div class="result-box hl"><div class="rb-label">Total Pool</div><div class="rb-val" id="thr-pool">—</div></div>
+            <div class="result-box"><div class="rb-label">Total Hours</div><div class="rb-val" id="thr-hours">—</div></div>
+          </div>
+          <div class="div"><div class="div-lbl">per person</div></div>
+          <table class="dt" id="tip-hrs-table"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tpanel" id="tp-tip-pts">
+      <div class="card">
+        <div class="card-hd"><span class="card-num">02</span><span class="card-title">Split by Points</span></div>
+        <div class="card-desc">Assign point values per role (e.g. Server = 3pts, Busser = 1pt). Tips split by total points.</div>
+        <label>Total Tip Pool ($)</label>
+        <input type="number" id="tip-pool-pts" placeholder="0.00" step="0.01" min="0"/>
+        <div class="div"><div class="div-lbl">staff & points</div></div>
+        <div style="display:grid;grid-template-columns:1fr 80px 28px;gap:6px;margin-bottom:5px">
+          <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Name / Role</span>
+          <span style="font-size:8px;letter-spacing:0.13em;text-transform:uppercase;color:var(--smoke)">Points</span>
+          <span></span>
+        </div>
+        <div id="tip-pts-rows"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addTipPtsRow()">+ Add Staff Member</button>
+        <button class="btn" onclick="calcTipPts()">Calculate Split</button>
+        <div id="tip-pts-res" style="display:none">
+          <div class="result-grid">
+            <div class="result-box hl"><div class="rb-label">Total Pool</div><div class="rb-val" id="tpr-pool">—</div></div>
+            <div class="result-box"><div class="rb-label">Total Points</div><div class="rb-val" id="tpr-pts">—</div></div>
+          </div>
+          <div class="div"><div class="div-lbl">per person</div></div>
+          <table class="dt" id="tip-pts-table"></table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  COMMENT BANK
+══════════════════════════════════════════════ -->
+<div class="page" id="page-comments">
+  <div class="page-hdr">
+    <div class="hdr-rule"><div class="hdr-line"></div><span style="color:var(--ember);font-size:13px">🍴</span><div class="hdr-line r"></div></div>
+    <div class="brand">Comment Bank</div>
+    <div class="brand-sub">Fork &amp; Foundry · Tap to Copy</div>
+  </div>
+  <div class="cbank-wrap">
+    <div style="position:relative;margin-bottom:10px">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--smoke);font-size:12px;pointer-events:none">🔍</span>
+      <input type="text" placeholder="Search comments..." oninput="handleCBSearch(this.value)" style="padding-left:36px"/>
+    </div>
+    <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;padding-bottom:2px" id="cb-tabs"></div>
+    <div id="cb-content"></div>
+    <div id="cb-empty" style="display:none;text-align:center;padding:40px;font-size:10px;color:var(--smoke)">No comments found.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  BLOG
+══════════════════════════════════════════════ -->
+<div class="page" id="page-blog">
+  <div class="page-hdr">
+    <div class="hdr-rule"><div class="hdr-line"></div><span style="color:var(--ember);font-size:13px">🍴</span><div class="hdr-line r"></div></div>
+    <div class="brand">The Foundry</div>
+    <div class="brand-sub">Fork &amp; Foundry · Systems &amp; Real Talk</div>
+  </div>
+  <div class="blog-wrap" id="blog-list-view">
+    <div id="blog-cards"></div>
+    <div class="site-footer" style="margin-top:16px"><span class="sf-brand">Fork &amp; Foundry</span><span class="sf-motto">Forged in Service</span></div>
+  </div>
+  <div class="post-wrap" id="blog-post-view">
+    <div class="post-back" onclick="showBlogList()">← Back to Blog</div>
+    <div class="post-tag" id="post-tag"></div>
+    <div class="post-title" id="post-title"></div>
+    <div class="post-meta" id="post-meta"></div>
+    <div class="post-body" id="post-body"></div>
+    <div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border)">
+      <div style="font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--smoke);margin-bottom:10px">Tools mentioned in this post</div>
+      <div id="post-tools"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  ABOUT
+══════════════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="page-hdr">
+    <div class="hdr-rule"><div class="hdr-line"></div><span style="color:var(--ember);font-size:13px">🍴</span><div class="hdr-line r"></div></div>
+    <div class="brand">About</div>
+    <div class="brand-sub">Fork &amp; Foundry · Forged in Service</div>
+  </div>
+  <div class="about-wrap">
+
+    <div class="about-section">
+      <h2>What Is <em>Fork & Foundry?</em></h2>
+      <p>Fork & Foundry is a platform built for the people who actually run kitchens. Not the Michelin-star fantasy — the real thing. The prep shifts, the line checks, the food cost spreadsheets, the staff callouts, the Saturday dinner rushes.</p>
+      <p><strong>We're here for the operators, chefs, and cooks who show up every day</strong> and do the work that keeps the industry running. We believe the biggest problem in professional kitchens isn't passion — it's lack of systems. And we're building the tools and community to fix that.</p>
+    </div>
+
+    <div class="big-quote">"Kitchens don't fail from cooking. They fail from systems."</div>
+
+    <div class="about-section">
+      <h2>Our <em>Four Pillars</em></h2>
+      <div class="pillar-grid">
+        <div class="pillar"><div class="pillar-icon">🤝</div><div class="pillar-title">Community</div><div class="pillar-desc">We survive together. No kitchen runs alone — and neither should you.</div></div>
+        <div class="pillar"><div class="pillar-icon">🍽️</div><div class="pillar-title">Food</div><div class="pillar-desc">Built on passion. Focused on quality. The craft comes first, always.</div></div>
+        <div class="pillar"><div class="pillar-icon">⚙️</div><div class="pillar-title">Systems</div><div class="pillar-desc">Structured. Measurable. Repeatable. The invisible engine behind every great kitchen.</div></div>
+        <div class="pillar"><div class="pillar-icon">📈</div><div class="pillar-title">Growth</div><div class="pillar-desc">Better kitchens build stronger futures — for cooks, operators, and the whole industry.</div></div>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <h2>Why <em>Free Tools?</em></h2>
+      <p>The restaurant industry is brutal. Margins are tight, resources are thin, and most of the software built for kitchens costs money most operators don't have. <strong>Fork & Foundry's tools are free because they should be.</strong></p>
+      <p>A food cost calculator shouldn't cost $50/month. A prep list shouldn't require a subscription. These are basic tools for a hard job, and every kitchen deserves access to them — from a 10-seat cafe in a small town to a 200-cover restaurant in a major city.</p>
+    </div>
+
+    <div class="about-section">
+      <h2>The <em>Mission</em></h2>
+      <p>To build a generation of kitchen operators who don't just survive — but build something lasting. We do that through free tools, honest content, and a community that actually helps each other.</p>
+      <p><strong>Survive together. Thrive through systems.</strong> That's not a tagline. That's the whole thing.</p>
+      <div class="team-note">
+        <div class="team-note-title">🍴 Forged in Service · Est. 2026</div>
+        <div class="team-note-text">Follow us on Instagram <a href="https://instagram.com/forkansfoundry" target="_blank" style="color:var(--ember)">@forkansfoundry</a> for daily content on kitchen systems, operations, and real talk from the industry.</div>
+      </div>
+    </div>
+
+    <div class="site-footer"><span class="sf-brand">Fork &amp; Foundry</span><span class="sf-motto">Forged in Service</span></div>
+  </div>
+</div>
+
+<!-- ── GLOBAL NAV ── -->
+<nav class="gnav">
+  <button class="gnav-btn active" id="gn-home" onclick="goTo('home')"><span class="gnav-icon">🏠</span>Home</button>
+  <button class="gnav-btn" id="gn-tools" onclick="goTo('tools')"><span class="gnav-icon">⚖️</span>Tools</button>
+  <button class="gnav-btn" id="gn-foodcost" onclick="goTo('foodcost')"><span class="gnav-icon">💰</span>Cost</button>
+  <button class="gnav-btn" id="gn-blog" onclick="goTo('blog')"><span class="gnav-icon">📖</span>Blog</button>
+  <button class="gnav-btn" id="gn-about" onclick="goTo('about')"><span class="gnav-icon">🍴</span>About</button>
+</nav>
+<div id="toast">Copied!</div>
+
+<script>
+// ══ NAVIGATION ═══════════════════════════════════════════════════
+const pages=['home','tools','foodcost','prep','waste','tip','comments','blog','about'];
+function goTo(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.gnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const gn=document.getElementById('gn-'+id);
+  if(gn)gn.classList.add('active');
+  window.scrollTo(0,0);
+}
+function tt(id,el,page){
+  const pg=document.getElementById('page-'+page);
+  pg.querySelectorAll('.ttab').forEach(t=>t.classList.remove('active'));
+  pg.querySelectorAll('.tpanel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tp-'+id).classList.add('active');
+}
+function toast(msg='Copied!'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+// ══ UNIT CONVERTER ════════════════════════════════════════════════
+const unitSets={
+  weight:[{l:'Grams (g)',v:1},{l:'Kilograms (kg)',v:1000},{l:'Ounces (oz)',v:28.3495},{l:'Pounds (lb)',v:453.592}],
+  volume:[{l:'Milliliters (ml)',v:1},{l:'Liters (L)',v:1000},{l:'Teaspoons (tsp)',v:4.92892},{l:'Tablespoons (tbsp)',v:14.7868},{l:'Fluid Ounces (fl oz)',v:29.5735},{l:'Cups',v:236.588},{l:'Quarts (qt)',v:946.353},{l:'Gallons (gal)',v:3785.41}]
+};
+function updateConvUnits(){
+  const cat=document.getElementById('conv-cat').value;
+  const us=unitSets[cat];
+  ['conv-from','conv-to'].forEach((id,i)=>{
+    const s=document.getElementById(id);
+    s.innerHTML=us.map((u,idx)=>`<option value="${u.v}"${idx===i?' selected':''}>${u.l}</option>`).join('');
+  });
+  if(cat==='volume')document.getElementById('conv-to').value=unitSets.volume[4].v;
+}
+updateConvUnits();
+function calcConvert(){
+  const amt=parseFloat(document.getElementById('conv-amt').value);
+  const from=parseFloat(document.getElementById('conv-from').value);
+  const to=parseFloat(document.getElementById('conv-to').value);
+  if(isNaN(amt)){alert('Enter an amount.');return;}
+  const result=(amt*from)/to;
+  const fl=document.getElementById('conv-from').selectedOptions[0].text;
+  const tl=document.getElementById('conv-to').selectedOptions[0].text;
+  document.getElementById('conv-out').textContent=fmt(result);
+  document.getElementById('conv-eq').textContent=`${fmt(amt)} ${fl} = ${fmt(result)} ${tl}`;
+  show('conv-res');
+}
+
+// ══ BAKER'S % ═════════════════════════════════════════════════════
+function addFlourRow(n='',w=''){
+  const d=mkIngRow(n,w,true);document.getElementById('flour-rows').appendChild(d);
+}
+function addBkrRow(n='',w=''){
+  const d=mkIngRow(n,w,false);document.getElementById('bkr-rows').appendChild(d);
+}
+function mkIngRow(n,w,isFlour){
+  const d=document.createElement('div');d.className='ing-row';
+  d.innerHTML=`<input type="text" placeholder="${isFlour?'Flour name':'Ingredient'}" value="${n}" style="font-size:12px;padding:8px 10px"/><input type="number" placeholder="g" value="${w}" step="any" style="font-size:12px;padding:8px 10px"/><div></div><button class="del-btn" onclick="this.parentElement.remove()">×</button>`;
+  return d;
+}
+addFlourRow('Bread Flour');addBkrRow('Water');addBkrRow('Salt');addBkrRow('Starter');
+function calcBakers(){
+  const fr=document.querySelectorAll('#flour-rows .ing-row');
+  const ir=document.querySelectorAll('#bkr-rows .ing-row');
+  let tf=0;const rows=[];
+  fr.forEach(r=>{const ins=r.querySelectorAll('input');const w=parseFloat(ins[1].value);if(!isNaN(w)&&w>0){tf+=w;rows.push({nm:ins[0].value||'Flour',w,isF:true});}});
+  if(!tf){alert('Enter at least one flour weight.');return;}
+  ir.forEach(r=>{const ins=r.querySelectorAll('input');const w=parseFloat(ins[1].value);if(!isNaN(w)&&w>0)rows.push({nm:ins[0].value||'Ingredient',w,pct:(w/tf)*100});});
+  let html=`<thead><tr><th>Ingredient</th><th>Weight</th><th class="r">Bkr %</th></tr></thead><tbody>`;
+  rows.forEach(r=>{const p=r.isF?((r.w/tf)*100).toFixed(1)+'%':r.pct.toFixed(1)+'%';html+=`<tr><td>${esc(r.nm)}</td><td>${fmt(r.w)}g</td><td class="ac r">${p}</td></tr>`;});
+  html+=`<tr><td style="color:var(--cream);font-weight:500">Total Flour</td><td style="color:var(--cream)">${fmt(tf)}g</td><td class="ac r" style="font-weight:500">100%</td></tr></tbody>`;
+  document.getElementById('bkr-table').innerHTML=html;show('bkr-res');
+}
+
+// ══ RECIPE SCALER ═════════════════════════════════════════════════
+function updateScaleMethod(){
+  const m=document.getElementById('scale-method').value;
+  const c=document.getElementById('scale-method-inputs');
+  if(m==='mult')c.innerHTML=`<label>Multiplier</label><input type="number" id="sf" placeholder="2" step="any"/>`;
+  else if(m==='pieces')c.innerHTML=`<div class="row-2"><div><label>Original Pieces</label><input type="number" id="op" placeholder="14"/></div><div><label>Target Pieces</label><input type="number" id="tp2" placeholder="28"/></div></div>`;
+  else c.innerHTML=`<div class="row-2"><div><label>Original Yield (g)</label><input type="number" id="oy" placeholder="1000"/></div><div><label>Target Yield (g)</label><input type="number" id="ty" placeholder="2000"/></div></div>`;
+}
+updateScaleMethod();
+function addScaleRow(n='',w=''){
+  const d=document.createElement('div');d.className='ing-row';
+  d.innerHTML=`<input type="text" placeholder="Ingredient" value="${n}" style="font-size:12px;padding:8px 10px"/><input type="number" placeholder="g" value="${w}" step="any" style="font-size:12px;padding:8px 10px"/><div></div><button class="del-btn" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('scale-rows').appendChild(d);
+}
+addScaleRow();addScaleRow();addScaleRow();
+function calcScale(){
+  const m=document.getElementById('scale-method').value;
+  let mx=1;
+  if(m==='mult'){mx=parseFloat(document.getElementById('sf').value);}
+  else if(m==='pieces'){const o=parseFloat(document.getElementById('op').value),t=parseFloat(document.getElementById('tp2').value);if(!o||!t){alert('Enter both counts.');return;}mx=t/o;}
+  else{const o=parseFloat(document.getElementById('oy').value),t=parseFloat(document.getElementById('ty').value);if(!o||!t){alert('Enter both yields.');return;}mx=t/o;}
+  if(isNaN(mx)||mx<=0){alert('Invalid values.');return;}
+  const rows=document.querySelectorAll('#scale-rows .ing-row');
+  let html=`<thead><tr><th>Ingredient</th><th>Original</th><th class="r">Scaled</th></tr></thead><tbody>`;
+  let ok=false;
+  rows.forEach(r=>{const ins=r.querySelectorAll('input');const w=parseFloat(ins[1].value);if(!isNaN(w)&&w>0){ok=true;html+=`<tr><td>${esc(ins[0].value||'Ingredient')}</td><td>${fmt(w)}g</td><td class="ac r">${fmt(w*mx)}g</td></tr>`;}});
+  if(!ok){alert('Enter at least one ingredient.');return;}
+  html+='</tbody>';
+  document.getElementById('scale-table').innerHTML=html;
+  document.getElementById('scale-mx').textContent=`Scale factor: ×${mx.toFixed(4).replace(/\.?0+$/,'')}`;
+  show('scale-res');
+}
+
+// ══ TEMPERATURE ════════════════════════════════════════════════════
+let tMode='fc';
+const gasM=[[1,275,135],[2,300,150],[3,325,165],[4,350,175],[5,375,190],[6,400,205],[7,425,220],[8,450,230],[9,475,245]];
+function setTempMode(m,el){
+  tMode=m;
+  document.querySelectorAll('#tp-temp .pbtn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('temp-lbl').textContent={fc:'Temperature (°F)',cf:'Temperature (°C)',gas:'Gas Mark (1–9)'}[m];
+  document.getElementById('temp-in').value='';
+  document.getElementById('temp-res').style.display='none';
+}
+function calcTemp(){
+  const v=parseFloat(document.getElementById('temp-in').value);
+  if(isNaN(v)){alert('Enter a temperature.');return;}
+  let out,eq;
+  if(tMode==='fc'){const c=(v-32)*5/9;out=`${fmt(c)}°C`;eq=`${v}°F = ${fmt(c)}°C`;}
+  else if(tMode==='cf'){const f=v*9/5+32;out=`${fmt(f)}°F`;eq=`${v}°C = ${fmt(f)}°F`;}
+  else{const g=Math.round(Math.max(1,Math.min(9,v)));const r=gasM.find(x=>x[0]===g)||gasM[8];out=`${r[1]}°F / ${r[2]}°C`;eq=`Gas Mark ${g} ≈ ${r[1]}°F / ${r[2]}°C`;}
+  document.getElementById('temp-out').textContent=out;
+  document.getElementById('temp-eq').textContent=eq;
+  show('temp-res');
+}
+
+// ══ FOOD COST ══════════════════════════════════════════════════════
+function addFCRow(n='',c='',p=''){
+  const d=document.createElement('div');d.className='ing-row';
+  d.innerHTML=`<input type="text" placeholder="Ingredient" value="${n}" style="font-size:12px;padding:8px 10px"/><input type="number" placeholder="0.00" value="${c}" step="0.01" min="0" style="font-size:12px;padding:8px 10px"/><input type="number" placeholder="100" value="${p}" step="1" min="1" max="100" style="font-size:12px;padding:8px 10px"/><button class="del-btn" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('fc-rows').appendChild(d);
+}
+addFCRow('Flour','','100');addFCRow('Water','','100');addFCRow('Salt','','100');addFCRow('Olive Oil','','100');
+function calcFC(){
+  const portions=parseFloat(document.getElementById('fc-portions').value);
+  if(!portions||portions<1){alert('Enter number of portions.');return;}
+  const rows=document.querySelectorAll('#fc-rows .ing-row');
+  let total=0;const items=[];let ok=false;
+  rows.forEach(r=>{
+    const ins=r.querySelectorAll('input');
+    const nm=ins[0].value||'Ingredient';
+    const cost=parseFloat(ins[1].value);
+    const pct=parseFloat(ins[2].value)/100||1;
+    if(!isNaN(cost)&&cost>0){ok=true;const used=cost*pct;total+=used;items.push({nm,cost,pctD:Math.round(pct*100),used});}
+  });
+  if(!ok){alert('Enter at least one ingredient cost.');return;}
+  const per=total/portions;
+  document.getElementById('fc-total').textContent='$'+total.toFixed(2);
+  document.getElementById('fc-per').textContent='$'+per.toFixed(2);
+  let html=`<thead><tr><th>Ingredient</th><th>Unit Cost</th><th>Used</th><th class="r">Cost</th></tr></thead><tbody>`;
+  items.forEach(i=>html+=`<tr><td>${esc(i.nm)}</td><td>$${i.cost.toFixed(2)}</td><td>${i.pctD}%</td><td class="ac r">$${i.used.toFixed(2)}</td></tr>`);
+  html+=`<tr><td colspan="3" style="color:var(--cream);font-weight:500">Total · ${portions} portions</td><td class="ac r" style="font-weight:500">$${total.toFixed(2)}</td></tr>`;
+  html+=`<tr><td colspan="3" style="color:var(--cream)">Cost Per Portion</td><td class="ac r">$${per.toFixed(2)}</td></tr></tbody>`;
+  document.getElementById('fc-breakdown').innerHTML=html;show('fc-res');
+}
+const cT={fine:{lo:25,hi:28},casual:{lo:28,hi:32},bar:{lo:32,hi:38},fast:{lo:28,hi:35}};
+function setFCP(v,el){document.getElementById('mp-target').value=v;document.querySelectorAll('#tp-fc-menu .pbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+function clearFCP(){document.querySelectorAll('#tp-fc-menu .pbtn').forEach(b=>b.classList.remove('sel'));}
+function calcMP(){
+  const cost=parseFloat(document.getElementById('mp-cost').value);
+  const target=parseFloat(document.getElementById('mp-target').value)/100;
+  if(isNaN(cost)||cost<=0){alert('Enter cost per portion.');return;}
+  if(isNaN(target)||target<=0){alert('Enter a target food cost %.');return;}
+  const price=cost/target;
+  const profit=price-cost;
+  const fcPct=(cost/price)*100;
+  document.getElementById('mp-price').textContent='$'+price.toFixed(2);
+  document.getElementById('mp-profit').textContent='$'+profit.toFixed(2);
+  setGauge('mp-gauge','mp-glbl',fcPct);
+  showVerdict('mp-v','mp-vl','mp-vt',fcPct,'casual');
+  show('mp-res');
+}
+function calcMC(){
+  const price=parseFloat(document.getElementById('mc-price').value);
+  const cost=parseFloat(document.getElementById('mc-cost').value);
+  const labor=parseFloat(document.getElementById('mc-labor').value)||0;
+  const overhead=parseFloat(document.getElementById('mc-overhead').value)||0;
+  const concept=document.getElementById('mc-concept').value;
+  if(isNaN(price)||price<=0){alert('Enter menu price.');return;}
+  if(isNaN(cost)||cost<=0){alert('Enter ingredient cost.');return;}
+  const fcPct=(cost/price)*100;
+  const gp=price-cost;
+  const gpPct=(gp/price)*100;
+  const net=price-cost-labor-overhead;
+  const primePct=((cost+labor)/price)*100;
+  const fcEl=document.getElementById('mc-fc');
+  fcEl.textContent=fcPct.toFixed(1)+'%';
+  const t=cT[concept];
+  fcEl.classList.remove('c-good','c-warn','c-bad');
+  if(fcPct<=t.hi)fcEl.classList.add('c-good');else if(fcPct<=t.hi+6)fcEl.classList.add('c-warn');else fcEl.classList.add('c-bad');
+  document.getElementById('mc-gp').textContent='$'+gp.toFixed(2);
+  document.getElementById('mc-gp-sub').textContent=gpPct.toFixed(1)+'% gross margin';
+  setGauge('mc-gauge','mc-glbl',fcPct);
+  showVerdict('mc-v','mc-vl','mc-vt',fcPct,concept);
+  if(labor>0){document.getElementById('mc-pp').textContent=primePct.toFixed(1)+'%';document.getElementById('mc-net').textContent='$'+net.toFixed(2);show('mc-prime');}
+  else document.getElementById('mc-prime').style.display='none';
+  show('mc-res');
+}
+function setGauge(fillId,lblId,pct){
+  const f=document.getElementById(fillId);
+  f.style.width=Math.min((pct/60)*100,100)+'%';
+  f.style.background=pct<=28?'var(--green)':pct<=35?'var(--yellow)':'var(--red)';
+  document.getElementById(lblId).textContent=pct.toFixed(1)+'%';
+}
+function showVerdict(wId,lId,tId,pct,concept){
+  const wrap=document.getElementById(wId);
+  const t=cT[concept]||cT.casual;
+  wrap.classList.remove('v-good','v-warn','v-bad','show');
+  let cls,lbl,msg;
+  if(pct<t.lo){cls='v-good';lbl='✓ Strong Margin';msg=`Your food cost of ${pct.toFixed(1)}% is below target. Solid margin — make sure quality isn't being cut to hit that number.`;}
+  else if(pct<=t.hi){cls='v-good';lbl='✓ On Target';msg=`${pct.toFixed(1)}% is right in the target range. Keep the system tight and the margin holds.`;}
+  else if(pct<=t.hi+6){cls='v-warn';lbl='⚠ Slightly High';msg=`${pct.toFixed(1)}% is above your target. Review portion sizes, prep yield, waste, and supplier costs.`;}
+  else{cls='v-bad';lbl='✕ Needs Attention';msg=`${pct.toFixed(1)}% is significantly above target. Audit your recipe costs, portions, purchasing, and waste tracking immediately.`;}
+  wrap.classList.add(cls,'show');
+  document.getElementById(lId).textContent=lbl;
+  document.getElementById(tId).textContent=msg;
+}
+
+// ══ PREP LIST ══════════════════════════════════════════════════════
+function addPrepRow(task='',station='',qty=''){
+  const d=document.createElement('div');d.className='prep-row';
+  d.innerHTML=`<input type="text" placeholder="Task" value="${task}" style="font-size:12px;padding:8px 10px"/><input type="text" placeholder="Station" value="${station}" style="font-size:12px;padding:8px 10px"/><input type="text" placeholder="Qty / Note" value="${qty}" style="font-size:12px;padding:8px 10px"/><button class="del-btn" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('prep-rows').appendChild(d);
+}
+addPrepRow('Mise en place','All Stations','By 3pm');
+addPrepRow('Stock reduction','Sauté','2 gallons');
+addPrepRow('Protein portioning','Grill','Per 86 sheet');
+addPrepRow('Sauce production','Sauté','');
+addPrepRow('Vegetable prep','Garde Manger','');
+function buildPrepList(){
+  const date=document.getElementById('prep-date').value||'Today';
+  const service=document.getElementById('prep-service').value;
+  const rows=document.querySelectorAll('#prep-rows .prep-row');
+  const items=[];
+  rows.forEach(r=>{
+    const ins=r.querySelectorAll('input');
+    const task=ins[0].value;
+    if(task){items.push({task,station:ins[1].value||'—',qty:ins[2].value||'—'});}
+  });
+  if(!items.length){alert('Add at least one task.');return;}
+  document.getElementById('prep-list-title').textContent=`${service} Prep — ${date}`;
+  document.getElementById('prep-list-sub').textContent=`Fork & Foundry · ${items.length} tasks`;
+  let html=`<thead><tr><th>☐</th><th>Task</th><th>Station</th><th class="r">Qty / Note</th></tr></thead><tbody>`;
+  items.forEach(i=>html+=`<tr><td style="color:var(--border);font-size:16px">☐</td><td>${esc(i.task)}</td><td style="color:var(--smoke)">${esc(i.station)}</td><td class="r" style="color:var(--smoke)">${esc(i.qty)}</td></tr>`);
+  html+='</tbody>';
+  document.getElementById('prep-table').innerHTML=html;
+  show('prep-output');
+  document.getElementById('prep-print-btn').style.display='block';
+}
+function printPrep(){window.print();}
+
+// ══ WASTE LOG ══════════════════════════════════════════════════════
+function addWasteRow(item='',qty='',cost=''){
+  const d=document.createElement('div');d.className='waste-row';
+  d.innerHTML=`<input type="text" placeholder="Item" value="${item}" style="font-size:12px;padding:8px 10px"/><input type="text" placeholder="e.g. 2 lbs" value="${qty}" style="font-size:12px;padding:8px 10px"/><input type="number" placeholder="0.00" value="${cost}" step="0.01" min="0" style="font-size:12px;padding:8px 10px"/><button class="del-btn" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('waste-rows').appendChild(d);
+}
+addWasteRow();addWasteRow();addWasteRow();
+function calcWaste(){
+  const rows=document.querySelectorAll('#waste-rows .waste-row');
+  let total=0;const items=[];let ok=false;
+  rows.forEach(r=>{
+    const ins=r.querySelectorAll('input');
+    const nm=ins[0].value;
+    const qty=ins[1].value;
+    const cost=parseFloat(ins[2].value);
+    if(nm&&!isNaN(cost)&&cost>0){ok=true;total+=cost;items.push({nm,qty:qty||'—',cost});}
+  });
+  if(!ok){alert('Add at least one waste entry.');return;}
+  items.sort((a,b)=>b.cost-a.cost);
+  document.getElementById('waste-total').textContent='$'+total.toFixed(2);
+  document.getElementById('waste-count').textContent=items.length;
+  let html=`<thead><tr><th>Item</th><th>Qty</th><th class="r">Cost</th></tr></thead><tbody>`;
+  items.forEach(i=>html+=`<tr><td>${esc(i.nm)}</td><td style="color:var(--smoke)">${esc(i.qty)}</td><td class="bad r">$${i.cost.toFixed(2)}</td></tr>`);
+  html+=`<tr><td colspan="2" style="color:var(--cream);font-weight:500">Total Waste</td><td class="r" style="color:var(--red);font-weight:500">$${total.toFixed(2)}</td></tr></tbody>`;
+  document.getElementById('waste-table').innerHTML=html;
+  const top=items[0];
+  document.getElementById('waste-focus').textContent=`Your biggest waste item is "${top.nm}" at $${top.cost.toFixed(2)}. Focus here first — small reductions in your top waste category have the biggest impact on margins.`;
+  show('waste-res');
+}
+
+// ══ TIP CALCULATOR ════════════════════════════════════════════════
+function addTipHrsRow(n='',h=''){
+  const d=document.createElement('div');d.className='staff-row';
+  d.innerHTML=`<input type="text" placeholder="Name" value="${n}" style="font-size:12px;padding:8px 10px"/><input type="number" placeholder="0" value="${h}" step="0.5" min="0" style="font-size:12px;padding:8px 10px"/><button class="del-btn" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('tip-hrs-rows').appendChild(d);
+}
+function addTipPtsRow(n='',p=''){
+  const d=document.createElement('div');d.className='staff-row';
+  d.innerHTML=`<input type="text" placeholder="Name / Role" value="${n}" style="font-size:12px;padding:8px 10px"/><input type="number" placeholder="0" value="${p}" step="0.5" min="0" style="font-size:12px;padding:8px 10px"/><button class="del-btn" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('tip-pts-rows').appendChild(d);
+}
+addTipHrsRow('Server 1',''); addTipHrsRow('Server 2',''); addTipHrsRow('Busser',''); addTipHrsRow('Bartender','');
+addTipPtsRow('Server (3pts)','3'); addTipPtsRow('Busser (1pt)','1'); addTipPtsRow('Bartender (2pts)','2');
+function calcTipHrs(){
+  const pool=parseFloat(document.getElementById('tip-pool-hrs').value);
+  if(isNaN(pool)||pool<=0){alert('Enter tip pool amount.');return;}
+  const rows=document.querySelectorAll('#tip-hrs-rows .staff-row');
+  let totalHrs=0;const staff=[];
+  rows.forEach(r=>{const ins=r.querySelectorAll('input');const nm=ins[0].value;const hrs=parseFloat(ins[1].value);if(nm&&!isNaN(hrs)&&hrs>0){totalHrs+=hrs;staff.push({nm,hrs});}});
+  if(!staff.length){alert('Add at least one staff member.');return;}
+  document.getElementById('thr-pool').textContent='$'+pool.toFixed(2);
+  document.getElementById('thr-hours').textContent=totalHrs;
+  let html=`<thead><tr><th>Name</th><th>Hours</th><th>%</th><th class="r">Tips</th></tr></thead><tbody>`;
+  staff.forEach(s=>{const pct=(s.hrs/totalHrs)*100;const tips=pool*(s.hrs/totalHrs);html+=`<tr><td>${esc(s.nm)}</td><td>${s.hrs}</td><td>${pct.toFixed(1)}%</td><td class="ac r">$${tips.toFixed(2)}</td></tr>`;});
+  html+='</tbody>';
+  document.getElementById('tip-hrs-table').innerHTML=html;
+  show('tip-hrs-res');
+}
+function calcTipPts(){
+  const pool=parseFloat(document.getElementById('tip-pool-pts').value);
+  if(isNaN(pool)||pool<=0){alert('Enter tip pool amount.');return;}
+  const rows=document.querySelectorAll('#tip-pts-rows .staff-row');
+  let totalPts=0;const staff=[];
+  rows.forEach(r=>{const ins=r.querySelectorAll('input');const nm=ins[0].value;const pts=parseFloat(ins[1].value);if(nm&&!isNaN(pts)&&pts>0){totalPts+=pts;staff.push({nm,pts});}});
+  if(!staff.length){alert('Add at least one staff member.');return;}
+  document.getElementById('tpr-pool').textContent='$'+pool.toFixed(2);
+  document.getElementById('tpr-pts').textContent=totalPts;
+  let html=`<thead><tr><th>Name / Role</th><th>Points</th><th>%</th><th class="r">Tips</th></tr></thead><tbody>`;
+  staff.forEach(s=>{const pct=(s.pts/totalPts)*100;const tips=pool*(s.pts/totalPts);html+=`<tr><td>${esc(s.nm)}</td><td>${s.pts}</td><td>${pct.toFixed(1)}%</td><td class="ac r">$${tips.toFixed(2)}</td></tr>`;});
+  html+='</tbody>';
+  document.getElementById('tip-pts-table').innerHTML=html;
+  show('tip-pts-res');
+}
+
+// ══ COMMENT BANK ══════════════════════════════════════════════════
+const cbData=[
+  {id:'chef',label:'Chef Spotlights',icon:'👨‍🍳',comments:[
+    {text:"This is what it looks like when curiosity meets discipline. The industry needs more cooks who ask questions and stay humble. Big things ahead.",tone:"Inspiring"},
+    {text:"Nominated by Ripert and Gray — that's not luck, that's earned. Chefs like this remind us why we do this work.",tone:"Respectful"},
+    {text:"The pride in craft here is real. You can't fake that kind of attention to detail. Fork & Foundry was built for cooks like this. 🔥",tone:"Brand tie-in"},
+    {text:"Humble enough to know what he doesn't know yet — that's the hardest skill to teach in any kitchen.",tone:"Reflective"},
+    {text:"Heritage on the plate, systems behind the line. That's the combination that builds something lasting.",tone:"Brand tie-in"},
+    {text:"Every great chef has someone who believed in them first. This is that moment.",tone:"Celebratory"},
+  ]},
+  {id:'news',label:'Industry News',icon:'📰',comments:[
+    {text:"Systems-driven leadership is what separates kitchens that survive from kitchens that thrive. This conversation matters.",tone:"On-brand"},
+    {text:"The restaurant industry doesn't fail from lack of passion — it fails from lack of structure.",tone:"Opinionated"},
+    {text:"Real leadership means building something that runs without you in the room. That's the standard.",tone:"F&F"},
+    {text:"The operators paying attention to this are the ones still standing in five years.",tone:"Direct"},
+    {text:"Award or not, the work is the work. Glad to see it getting recognized at this level.",tone:"Grounded"},
+    {text:"More conversations like this. The industry grows when the people at the top talk about what actually works.",tone:"Community"},
+  ]},
+  {id:'food',label:'Food Content',icon:'🍽️',comments:[
+    {text:"The restraint here is the technique. Knowing what to leave off the plate is as important as what you put on it.",tone:"Technical"},
+    {text:"You can see the system behind this dish. That's not accident — that's repetition.",tone:"Process"},
+    {text:"Real standards show up in the details. This is what that looks like.",tone:"Brand tie-in"},
+    {text:"The best food tells a story without needing a paragraph on the menu to explain it.",tone:"Craft"},
+    {text:"Heritage in every element. This is why food matters beyond just eating.",tone:"Cultural"},
+    {text:"Consistency at this level doesn't happen by chance. Respect the process behind the plate. 🔥",tone:"Grounded"},
+  ]},
+  {id:'inspo',label:'Inspiration',icon:'💡',comments:[
+    {text:"Survive together. Thrive through systems. This is exactly it.",tone:"F&F Motto"},
+    {text:"The kitchens that last aren't the ones with the most talent — they're the ones with the best structure.",tone:"Systems"},
+    {text:"Control the details. Own the outcome. No shortcuts.",tone:"F&F Voice"},
+    {text:"Every great kitchen runs on invisible systems. The ones people never see are the ones that matter most.",tone:"Insightful"},
+    {text:"This. Print it out and put it in every prep kitchen.",tone:"Punchy"},
+    {text:"The work before service is what makes service look effortless. Always.",tone:"Prep culture"},
+  ]},
+  {id:'community',label:'Community',icon:'🤝',comments:[
+    {text:"We survive together. That's not a slogan — it's the only way this industry works.",tone:"F&F Motto"},
+    {text:"The cooks who share knowledge build stronger kitchens than the ones who hoard it.",tone:"Community"},
+    {text:"This is the kind of content that actually moves the needle for people working the line.",tone:"Supportive"},
+    {text:"Better kitchens. Stronger futures. This is how we get there — one conversation at a time.",tone:"F&F Voice"},
+    {text:"The community this industry builds behind the scenes is something the guests never fully see. It's everything.",tone:"Reflective"},
+    {text:"Following for more of this. Real talk from real operators is rare.",tone:"Engagement"},
+  ]},
+  {id:'popups',label:'Pop-ups',icon:'🎪',comments:[
+    {text:"Pop-ups are where you find out what your systems are actually made of. No safety net. No excuses.",tone:"Direct"},
+    {text:"The energy of a well-run pop-up is unmatched. This looks dialed in. 🔥",tone:"Hype"},
+    {text:"This is where identity gets built. Keep going.",tone:"Encouraging"},
+    {text:"Every dish here tells you something about how this kitchen thinks. Love to see it.",tone:"Observant"},
+    {text:"The operators running these events are building the next generation of restaurants. Take notes.",tone:"Industry"},
+    {text:"Real kitchens, real people, real food. This is the stuff.",tone:"F&F Voice"},
+  ]},
+];
+let cbCat='all',cbQ='';
+const cbMap={};
+function buildCB(){
+  const tabs=document.getElementById('cb-tabs');
+  const allBtn=document.createElement('button');
+  allBtn.className='pbtn sel';allBtn.style.cssText='white-space:nowrap;flex-shrink:0;';
+  allBtn.textContent='All';allBtn.onclick=()=>setCBCat('all',allBtn);tabs.appendChild(allBtn);
+  cbData.forEach(c=>{
+    const b=document.createElement('button');b.className='pbtn';b.style.cssText='white-space:nowrap;flex-shrink:0;';
+    b.textContent=c.icon+' '+c.label;b.onclick=()=>setCBCat(c.id,b);tabs.appendChild(b);
+    c.comments.forEach((cm,i)=>cbMap[c.id+'-'+i]=cm.text);
+  });
+  renderCB();
+}
+function setCBCat(id,el){
+  cbCat=id;
+  document.querySelectorAll('#cb-tabs .pbtn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');renderCB();
+}
+function handleCBSearch(v){cbQ=v.toLowerCase();renderCB();}
+function renderCB(){
+  const content=document.getElementById('cb-content');
+  const empty=document.getElementById('cb-empty');
+  const filtered=cbCat==='all'?cbData:cbData.filter(d=>d.id===cbCat);
+  let html='';let total=0;
+  filtered.forEach(cat=>{
+    const comments=cat.comments.filter(c=>!cbQ||c.text.toLowerCase().includes(cbQ)||c.tone.toLowerCase().includes(cbQ));
+    if(!comments.length)return;
+    total+=comments.length;
+    if(cbCat==='all')html+=`<div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--cream);margin:16px 0 8px">${cat.icon} ${cat.label}</div>`;
+    comments.forEach((c,i)=>{
+      const id=cat.id+'-'+i;
+      html+=`<div class="comment-card-item" onclick="copyCB('${id}',this)"><div class="cc-text">${esc(c.text)}</div><div class="cc-footer"><span class="cc-tone">${esc(c.tone)}</span><span class="cc-copy">⎘ Tap to copy</span></div></div>`;
+    });
+  });
+  content.innerHTML=html;
+  empty.style.display=total===0?'block':'none';
+}
+function copyCB(id,el){
+  const text=cbMap[id];if(!text)return;
+  const copy=()=>{el.style.borderColor='var(--green)';toast('Copied!');setTimeout(()=>el.style.borderColor='var(--border)',2000);};
+  if(navigator.clipboard)navigator.clipboard.writeText(text).then(copy).catch(()=>fbCopy(text,copy));
+  else fbCopy(text,copy);
+}
+function fbCopy(text,cb){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);cb();
+}
+
+// ══ BLOG ══════════════════════════════════════════════════════════
+// ─────────────────────────────────────────────────────────────────
+// TO ADD A NEW POST: copy the block below and paste it at the TOP
+// of the posts array (before the first { ), then fill it in.
+//
+// {
+//   id:'unique-id',
+//   tag:'Systems',           // Systems | Operations | Craft | Community
+//   title:'Your Post Title',
+//   date:'May 2026',
+//   readTime:'3 min read',
+//   excerpt:'One or two sentences shown on the blog list page.',
+//   body:`<p>Your content here. Use &lt;h3&gt; for subheadings,
+//          &lt;p&gt; for paragraphs, &lt;blockquote&gt; for pull quotes,
+//          and &lt;ul&gt;&lt;li&gt; for bullet lists.</p>`,
+//   tools:[{label:'Tool Name',page:'tools'}]  // page: tools | foodcost | prep | waste | tip
+// },
+// ─────────────────────────────────────────────────────────────────
+const posts=[
+  {
+    id:'systems',tag:'Systems',title:'Why Kitchens Fail From Systems, Not Cooking',date:'April 2026',readTime:'4 min read',
+    excerpt:'Every kitchen has passionate cooks. The ones that last have something else — a system behind the line that runs whether the chef is there or not.',
+    body:`<p>Walk into any struggling restaurant and you'll usually find the same thing: talented cooks, bad systems. The food is good. The passion is real. But something keeps falling apart — inconsistent portions, food costs that creep up, prep that never gets done in the right order, service that unravels when one key person calls out.</p>
+<p><strong>The problem isn't the cooking. The problem is the infrastructure around the cooking.</strong></p>
+<h3>The System Is the Kitchen</h3>
+<p>In every high-performing kitchen, the food is almost secondary to the architecture around it. Par levels that get checked every morning. A prep list that every cook works from, not just the senior ones. A waste log that gets reviewed weekly. Recipe cards with actual food cost percentages on them.</p>
+<blockquote>"A kitchen without systems is just a collection of people who happen to be in the same room."</blockquote>
+<p>These aren't glamorous things. They don't make for great Instagram content. But they're the difference between a kitchen that works and one that slowly hemorrhages margin until it closes.</p>
+<h3>What Systems Actually Look Like</h3>
+<p>A system isn't complicated software. It's a daily checklist your team actually uses. It's a prep list that gets built the night before and reviewed at the start of each shift. It's a food cost calculation you run on every new menu item before it goes on the menu — not after.</p>
+<ul>
+<li>A par level system that prevents both over-ordering and running out</li>
+<li>A waste log that makes waste visible and therefore manageable</li>
+<li>Recipe costing that gets updated when ingredient costs change</li>
+<li>A shift debrief, even a short one, where problems get named</li>
+</ul>
+<h3>Start Small. Be Consistent.</h3>
+<p>You don't need to overhaul everything at once. Pick one system. Build a prep list template and use it for two weeks. Run your food cost numbers on your top five menu items. Log waste for one week and see what you find.</p>
+<p><strong>Small systems, applied consistently, compound over time.</strong> That's how kitchens stop just surviving and start building something that lasts.</p>`,
+    tools:[{label:'Prep List Generator',page:'prep'},{label:'Food Cost Calculator',page:'foodcost'},{label:'Waste Log Tracker',page:'waste'}]
+  },
+  {
+    id:'numbers',tag:'Operations',title:'The 6 Numbers Every Kitchen Operator Should Know',date:'April 2026',readTime:'5 min read',
+    excerpt:'Most kitchen operators cook by feel. The ones who last cook by numbers. Here are the six metrics that actually tell you how your kitchen is performing.',
+    body:`<p>You can have the best food in the city and still go out of business. It happens constantly. The reason is almost always the same — the operator didn't know their numbers until it was too late to fix them.</p>
+<p><strong>Running a kitchen without tracking these numbers is like driving without a dashboard.</strong> You might get where you're going, but you won't know how close to empty you are until you stop.</p>
+<h3>1. Food Cost Percentage</h3>
+<p>Your food cost % is the cost of your ingredients divided by the revenue they generate. Fine dining targets 25–28%. Casual sits at 28–32%. Bar and pub concepts run 32–38%. If you don't know your number, you can't manage it.</p>
+<h3>2. Prime Cost</h3>
+<p>Prime cost is food cost plus labor cost, expressed as a percentage of revenue. <strong>The industry benchmark is 55–65%.</strong> Above 65% and you're likely not profitable regardless of your revenue. This is the single most important number in your operation.</p>
+<h3>3. Cost Per Portion</h3>
+<p>Every dish on your menu has a real cost to produce. Recipe costing — adding up every ingredient at its actual purchase price — gives you this number. If you don't know your cost per portion, you can't price intelligently or identify where margin is leaking.</p>
+<h3>4. Waste Cost</h3>
+<p>What does your kitchen throw away in a week? Most operators have no idea. Log it for one week and you'll find your waste cost — and almost always identify a fixable problem immediately. Trim waste, and food cost drops without changing a single recipe.</p>
+<h3>5. Menu Item Contribution Margin</h3>
+<p>Not all menu items are equal. Your highest-selling item might also be your lowest margin item. Contribution margin (menu price minus food cost) tells you which items are actually making you money, not just selling well.</p>
+<h3>6. Variance</h3>
+<p><strong>Variance is the difference between what your food cost should be based on sales and what it actually is.</strong> High variance means something is wrong — over-portioning, theft, waste, or incorrect recipe cards. Tracking variance weekly catches problems before they become crises.</p>
+<blockquote>"Know your numbers like you know your mise en place. Every day. Every shift."</blockquote>
+<p>Start with food cost percentage and prime cost. Get those two dialed in and you'll have more financial clarity than 80% of the kitchens you've ever worked in.</p>`,
+    tools:[{label:'Food Cost Calculator',page:'foodcost'},{label:'Waste Log Tracker',page:'waste'}]
+  },
+  {
+    id:'preplist',tag:'Systems',title:'Building a Prep List That Actually Works',date:'March 2026',readTime:'3 min read',
+    excerpt:'Most prep lists are written on the back of a ticket or shouted across the kitchen. Here\'s how to build one that runs your service instead of reacting to it.',
+    body:`<p>The prep list is the most underrated document in a professional kitchen. Done right, it's the difference between a calm, controlled service and a three-hour scramble that ends with 86'd items and an exhausted crew.</p>
+<p>Done wrong — or not done at all — it means whoever shows up first decides what gets made, and service gets built on guesswork.</p>
+<h3>The Problem With Most Prep Lists</h3>
+<p>Most prep lists are reactive. They're written based on what's missing rather than what's needed. Someone shows up to work, opens the walk-in, and starts prepping whatever looks low. That's not a system — that's organized chaos.</p>
+<p><strong>A real prep list is built the night before</strong>, based on reservation counts, historical sales data, and what's already in the house. It assigns tasks to stations, sets quantities, and gives every cook a clear target before they pick up a knife.</p>
+<h3>What a Good Prep List Includes</h3>
+<ul>
+<li>The date and service (lunch, dinner, brunch, all-day)</li>
+<li>Every task that needs to happen, not just the obvious ones</li>
+<li>The station responsible for each task</li>
+<li>Quantities — actual numbers, not "some" or "enough"</li>
+<li>A priority order so the most critical items happen first</li>
+</ul>
+<h3>The Discipline Behind the List</h3>
+<p>The list only works if the culture supports it. That means reviewing it at the start of each shift, not just handing it out. It means updating it as things get completed. And it means holding people accountable to it — if something on the list doesn't get done, that's a conversation, not an assumption.</p>
+<blockquote>"A prep list is a promise you make to your service team. The kitchen that keeps that promise runs better than the one that doesn't."</blockquote>
+<p>Use our Prep List Generator to build one you can print and take into service. Start using it every day for two weeks. Watch what changes.</p>`,
+    tools:[{label:'Prep List Generator',page:'prep'}]
+  },
+  {
+    id:'bakers',tag:'Craft',title:"What Baker's Percentage Can Teach You About Any Recipe",date:'March 2026',readTime:'4 min read',
+    excerpt:"Baker's percentage isn't just for bread bakers. It's a framework for thinking about ratios, balance, and what a recipe actually is — that applies everywhere in a professional kitchen.",
+    body:`<p>If you've worked in a bakery or with a serious bread program, you know baker's percentage. Everything is expressed as a ratio relative to flour weight. Flour is always 100%. Water might be 75%. Salt is 2%. Starter is 20%.</p>
+<p>At first it seems like a bakery-specific tool. But the thinking behind it applies to every corner of a professional kitchen.</p>
+<h3>What Baker's Percentage Actually Is</h3>
+<p>Baker's percentage is a way of expressing a recipe not in fixed quantities, but in ratios. When you express a recipe in baker's percentages, you can scale it to any batch size instantly. You can compare different recipes for the same item. You can identify where balance is off.</p>
+<p><strong>A 70% hydration focaccia will behave differently from a 80% hydration one.</strong> Baker's percentage makes that visible immediately, where a recipe written in cups and tablespoons hides it.</p>
+<h3>The Broader Lesson</h3>
+<p>The principle behind baker's percentage — expressing ingredients as ratios rather than fixed quantities — applies everywhere. A beurre blanc with too much butter isn't wrong in grams, it's wrong in ratio. A vinaigrette that doesn't emulsify properly is a ratio problem.</p>
+<ul>
+<li>Ratios scale. Fixed quantities don't.</li>
+<li>Ratios reveal balance. Fixed quantities hide it.</li>
+<li>Ratios make you understand a recipe. Fixed quantities make you follow one.</li>
+</ul>
+<h3>Using It in Your Kitchen</h3>
+<p>Start with any recipe you make repeatedly. Convert it to baker's percentage — or to a ratio system with a common base. Now you can scale it for any batch size without a calculator. You can identify what makes it work. And you can troubleshoot it when something goes wrong.</p>
+<blockquote>"Understanding ratios is the difference between a cook who follows recipes and a cook who understands food."</blockquote>
+<p>Use our Baker's Percentage calculator to convert any bread or dough recipe. Once you start thinking in percentages, you won't stop.</p>`,
+    tools:[{label:'Kitchen Toolkit — Baker\'s %',page:'tools'}]
+  },
+];
+function buildBlog(){
+  const container=document.getElementById('blog-cards');
+  container.innerHTML='';
+  posts.forEach((p,i)=>{
+    const d=document.createElement('div');d.className='blog-card';
+    d.innerHTML=`<div class="blog-tag">${p.tag}</div><div class="blog-title">${p.title}</div><div class="blog-excerpt">${p.excerpt}</div><div class="blog-meta"><span class="blog-date">${p.date} · ${p.readTime}</span><span class="blog-read">Read →</span></div>`;
+    d.onclick=()=>showPost(i);
+    container.appendChild(d);
+  });
+}
+function showPost(idx){
+  const p=posts[idx];
+  document.getElementById('post-tag').textContent=p.tag;
+  document.getElementById('post-title').textContent=p.title;
+  document.getElementById('post-meta').textContent=p.date+' · '+p.readTime;
+  document.getElementById('post-body').innerHTML=p.body;
+  const toolsEl=document.getElementById('post-tools');
+  toolsEl.innerHTML='';
+  p.tools.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='lcard';d.style.marginBottom='8px';
+    d.innerHTML=`<div class="lcard-icon">🍴</div><div class="lcard-body"><span class="lcard-title" style="font-size:14px">${t.label}</span></div><span class="lcard-arrow">→</span>`;
+    d.onclick=()=>goTo(t.page);
+    toolsEl.appendChild(d);
+  });
+  document.getElementById('blog-list-view').style.display='none';
+  const pv=document.getElementById('blog-post-view');
+  pv.style.display='block';pv.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showBlogList(){
+  document.getElementById('blog-list-view').style.display='block';
+  const pv=document.getElementById('blog-post-view');
+  pv.style.display='none';pv.classList.remove('active');
+  window.scrollTo(0,0);
+}
+
+// ══ HELPERS ═══════════════════════════════════════════════════════
+function show(id){document.getElementById(id).style.display='block';}
+function fmt(n){
+  if(isNaN(n))return'—';
+  if(Math.abs(n)<0.01)return n.toFixed(4);
+  if(Math.abs(n)<1)return n.toFixed(3);
+  if(Math.abs(n)<100)return parseFloat(n.toFixed(2)).toString();
+  return parseFloat(n.toFixed(1)).toString();
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ══ INIT ══════════════════════════════════════════════════════════
+buildCB();
+buildBlog();
+</script>
+</body>
+</html>
